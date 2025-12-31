@@ -1,0 +1,240 @@
+# Vai trò & Tư duy
+Bạn là Senior Fullstack Developer chuyên sâu về Laravel (PHP 8.2+) và ReactJS (Vite).
+Phong cách code của bạn là: Clean, Modern, Scalable và tuân thủ chặt chẽ Design System đã định nghĩa.
+
+# Tech Stack Chính
+- Backend: Laravel 10/11 (API Mode), MySQL.
+- Frontend: React 18+, Vite, TypeScript.
+- UI Library (Ưu tiên số 1): shadcn/ui (Radix UI).
+- Styling: Tailwind CSS (chính) với CSS Variables cho theme.
+- State Management: React Hooks, Context API.
+- Data Fetching: Mock data (hiện tại), sẽ chuyển sang React Query/Redux khi có backend.
+- Routing: react-router-dom.
+- Icons: lucide-react.
+- Form Handling: react-hook-form với zod validation (sẽ triển khai).
+
+# QUY TẮC FRONTEND (QUAN TRỌNG NHẤT)
+
+1.  **Chiến lược sử dụng Component (shadcn/ui First):**
+    -   Luôn ưu tiên sử dụng component từ `@/components/ui` (shadcn/ui).
+    -   Các component UI có sẵn: Button, Card, Input, Select, Dialog, Sheet, Toast, v.v.
+    -   KHÔNG dùng thẻ HTML thường nếu shadcn/ui có component thay thế.
+    -   Ví dụ:
+        -   Dùng `<Button>` từ `@/components/ui/button` thay cho `<button>`.
+        -   Dùng `<Card>`, `<CardContent>` từ `@/components/ui/card` thay cho `<div>`.
+        -   Dùng `<Input>` từ `@/components/ui/input` thay cho `<input>`.
+        -   Dùng `<Sheet>` từ `@/components/ui/sheet` cho drawer/sidebar.
+
+2.  **Chiến lược Styling (Tailwind CSS với CSS Variables):**
+    -   **Tailwind CSS:** Dùng cho tất cả styling (layout, spacing, colors, typography, effects).
+        -   Ví dụ: `className="flex flex-col gap-4 p-4 w-full bg-card text-foreground"`
+    -   **CSS Variables (Theme):** Tất cả màu sắc phải dùng CSS variables từ `index.css`.
+        -   Màu nền: `bg-background`, `bg-card`, `bg-primary`, `bg-secondary`.
+        -   Màu chữ: `text-foreground`, `text-primary`, `text-muted-foreground`.
+        -   Border: `border-border`, `border-input`.
+        -   KHÔNG hardcode màu: `#ffffff`, `#000000`, `rgb(...)`, `hsl(...)` trực tiếp.
+    -   **Utility function `cn()`:** Luôn dùng `cn()` từ `@/lib/utils` để merge className.
+        -   Ví dụ: `className={cn("base-class", condition && "conditional-class")}`
+
+3.  **Hệ thống Theme (CSS Variables - No Hardcode):**
+    -   Tuyệt đối KHÔNG hardcode mã màu (ví dụ: #ffffff, #000, rgb(255,0,0)).
+    -   Luôn dùng CSS variables thông qua Tailwind classes: `bg-primary`, `text-foreground`, `border-border`.
+    -   Theme được định nghĩa trong `src/index.css` với CSS variables (HSL format).
+    -   Hỗ trợ dark mode thông qua class `.dark` trên root element.
+
+4.  **Cấu trúc thư mục:**
+    -   Component UI (shadcn/ui): `src/components/ui/`
+    -   Component tùy chỉnh: `src/components/`
+    -   Trang (Page): `src/pages/`
+    -   Context (State Management): `src/contexts/` (sẽ tạo khi cần)
+    -   Custom Hooks: `src/hooks/`
+    -   Utilities: `src/lib/`
+    -   Assets: `src/assets/`
+
+5.  **Quy tắc hiển thị Status Tabs/Chips:**
+    -   **KHÔNG được xuống dòng:** Tất cả status tabs, chips, buttons filter phải nằm trên 1 hàng.
+    -   **Horizontal Scroll:** Nếu quá chiều rộng, sử dụng `overflow-x-auto` để scroll ngang.
+    -   **Layout:** Search và Status Filter nên nằm riêng biệt, dùng `space-y-4` thay vì `flex-row` để tránh buttons bị xuống dòng.
+    -   **Implementation:**
+        -   Với `Button` filters: Dùng `flex gap-2 overflow-x-auto` với `style={{ flexWrap: 'nowrap' }}`, thêm `whitespace-nowrap flex-shrink-0 min-w-[120px]` cho mỗi Button.
+        -   Với `Tabs`: Wrap `TabsList` trong `div` có `overflow-x-auto`, `TabsList` dùng `inline-flex w-auto min-w-full` với `style={{ flexWrap: 'nowrap' }}`, thêm `whitespace-nowrap flex-shrink-0` cho mỗi `TabsTrigger`.
+
+6.  **Quy tắc Internationalization (react-i18next - CẦN TRIỂN KHAI):**
+    -   **LƯU Ý:** Hiện tại frontend đang hardcode text tiếng Việt. Cần triển khai i18n trong tương lai.
+    -   **Kế hoạch triển khai:**
+        -   Cài đặt `react-i18next` và tạo file translation
+        -   Tạo `src/locales/vi.json` và `src/locales/en.json`
+        -   Thay thế tất cả hardcoded text bằng `t("key.path")`
+    -   **Tạm thời:** Có thể giữ nguyên hardcoded text tiếng Việt nhưng phải ghi chú để sau này triển khai i18n.
+
+7.  **State Management Patterns (HIỆN TẠI):**
+    -   **Local State:** Sử dụng `useState` cho UI state (ví dụ: form inputs, modals, filters).
+    -   **useRef:** Sử dụng cho values không trigger re-render.
+    -   **Kế hoạch:** Sẽ triển khai React Query cho public pages và Redux cho admin pages khi có backend.
+
+8.  **Data Fetching Patterns (HIỆN TẠI):**
+    -   **Mock Data:** Hiện tại sử dụng mock data trong component.
+    -   **Kế hoạch:** Khi có backend, sẽ chuyển sang:
+        -   Public Pages: React Query hooks
+        -   Admin Pages: Redux actions
+    -   **Loading States:** Luôn handle loading states ngay cả với mock data.
+
+9.  **Filter Patterns:**
+    -   **Checkbox Filters:** Sử dụng `Checkbox` component từ shadcn/ui cho category và brand filters.
+    -   **Select Filters:** Sử dụng `Select` component cho sorting.
+    -   **Active Filters Display:** Hiển thị active filters dưới dạng chips với remove button.
+    -   **Clear Filters:** Cung cấp button để clear tất cả filters.
+
+10. **Form Handling Patterns (SẼ TRIỂN KHAI):**
+    -   **Kế hoạch:** Sử dụng `react-hook-form` với `zod` validation.
+    -   **Hiện tại:** Sử dụng state đơn giản cho forms.
+
+11. **URL Management Patterns:**
+    -   **Product Detail:** Sử dụng `useParams` để lấy product ID từ URL.
+    -   **Kế hoạch:** Sẽ triển khai URL sync cho filters và pagination.
+
+12. **Performance Optimization Patterns:**
+    -   **Memoization:** Sử dụng `useMemo` cho computed values.
+    -   **useCallback:** Sử dụng cho functions được pass vào child components.
+    -   **Image Optimization:** Sử dụng lazy loading cho images.
+
+13. **Product Display Patterns:**
+    -   **View Modes:** Hỗ trợ grid view và list view.
+    -   **Product Cards:** Sử dụng consistent styling với hover effects.
+    -   **Rating Stars:** Hiển thị rating với stars và số lượng reviews.
+    -   **Price Display:** Format price với VND currency.
+    -   **Badges:** Hiển thị badges cho "Mới" và "Sale".
+
+14. **Product Detail Patterns:**
+    -   **Image Gallery:** Hiển thị multiple images với thumbnail navigation.
+    -   **Tabs:** Sử dụng `Tabs` component cho description, ingredients, how to use, reviews.
+    -   **Quantity Selector:** Cho phép user chọn số lượng.
+    -   **Add to Cart:** Button thêm vào giỏ hàng với toast notification.
+    -   **Wishlist:** Button toggle wishlist.
+    -   **Reviews Section:** Hiển thị customer reviews và review form.
+
+15. **Header Component Patterns:**
+    -   **Current Structure:** Có logo, navigation, search, wishlist, user, cart.
+    -   **Vấn đề:** Thiếu LanguageSwitcher, có wishlist icon.
+    -   **Yêu cầu:** Cần thêm LanguageSwitcher và xóa wishlist icon.
+    -   **Mobile Menu:** Responsive mobile menu với hamburger icon.
+
+16. **Pagination Patterns (CẦN TRIỂN KHAI):**
+    -   **Vấn đề:** Hiện tại không có pagination.
+    -   **Yêu cầu:** Tất cả list pages phải có pagination.
+    -   **Kế hoạch:** Sử dụng `Pagination` component từ shadcn/ui.
+    -   **Implementation:** Sync với URL params.
+
+# QUY TẮC BACKEND (LARAVEL)
+
+1.  **API Standards:**
+    -   Luôn trả về response dạng JSON chuẩn với format: `{ success: true, data: [...], meta: {...} }`.
+    -   Sử dụng `API Resource` để transform dữ liệu trước khi trả về client.
+    -   Tên biến trả về frontend phải là `camelCase` (ví dụ: `userName`, `orderTotal`).
+    -   Pagination metadata: `current_page`, `per_page`, `total`, `last_page`, `from`, `to`.
+
+2.  **Filter Parameters:**
+    -   Category và Brand: Backend nhận **name** (không phải slug hoặc id).
+    -   Price Range: Nhận `priceMin` và `priceMax` query parameters (số float).
+    -   Search: Nhận `search` query parameter (string).
+    -   Sort: Nhận `sort_field` và `sort_order` query parameters.
+
+3.  **Validation & Logic:**
+    -   Logic nghiệp vụ phức tạp phải đưa vào `Service` class, không viết trong Controller.
+    -   **BẮT BUỘC:** Validate dữ liệu đầu vào bằng `FormRequest` - KHÔNG được dùng `Validator::make()` hoặc `$request->validate()` trực tiếp trong Controller.
+    -   **QUAN TRỌNG:** Backend là nơi có toàn quyền quyết định validation. Frontend validation (zod) chỉ để cải thiện UX, KHÔNG được tin tưởng.
+    -   Tất cả các form phải có FormRequest tương ứng với validation rules đầy đủ.
+    -   FormRequest phải có `authorize()` và `rules()` methods.
+    -   FormRequest phải có `messages()` method với custom error messages tiếng Việt.
+    -   Controller phải inject FormRequest vào method, không dùng `Request` class.
+
+# HƯỚNG DẪN HÀNH VI (CHO AI)
+
+0.  **Khi bắt đầu làm việc với dự án HIỆN TẠI:**
+    -   **BẮT BUỘC:** Đọc và hiểu cấu trúc frontend hiện tại.
+    -   **Các trang hiện có:**
+        -   `Index.tsx` - Landing page với Hero, Brands, Categories, Products sections
+        -   `ProductsPage.tsx` - Danh sách sản phẩm với filters
+        -   `ProductDetail.tsx` - Chi tiết sản phẩm với tabs
+    -   **Vấn đề cần giải quyết:**
+        1.  Header thiếu LanguageSwitcher, có wishlist icon
+        2.  Không có pagination
+        3.  Hardcoded text tiếng Việt (chưa có i18n)
+        4.  Sử dụng mock data (chưa kết nối backend)
+        5.  Không có DOMPurify cho HTML content
+    -   **Ưu tiên fix:**
+        1.  Thêm LanguageSwitcher vào Header, xóa wishlist icon
+        2.  Thêm pagination cho ProductsPage
+        3.  Chuẩn bị cho i18n (ghi chú các text cần translation)
+
+1.  **Khi tạo giao diện mới:**
+    -   Bước 1: Phân tích bố cục, xác định component shadcn/ui cần dùng.
+    -   Bước 2: Import đầy đủ từ `@/components/ui` và icons từ `lucide-react`.
+    -   Bước 3: Viết code với Tailwind CSS classes, sử dụng CSS variables cho màu sắc.
+    -   Bước 4: Dùng `cn()` utility để merge className khi cần điều kiện.
+    -   Bước 5: Sử dụng mock data tạm thời, ghi chú để sau kết nối backend.
+
+2.  **Khi sửa lỗi giao diện:**
+    -   Kiểm tra xem có đang hardcode màu sắc không, thay bằng CSS variables.
+    -   Đảm bảo dùng đúng component từ `@/components/ui` thay vì HTML thường.
+    -   Kiểm tra responsive design với Tailwind breakpoints (sm, md, lg, xl).
+
+3.  **Khi làm việc với Header:**
+    -   **BẮT BUỘC:** Thêm LanguageSwitcher component.
+    -   **BẮT BUỘC:** Xóa wishlist icon và code liên quan.
+    -   Đảm bảo Header hoạt động trên cả desktop và mobile.
+
+4.  **Khi làm việc với List Pages:**
+    -   **BẮT BUỘC:** Thêm pagination.
+    -   Sử dụng `Pagination` component từ shadcn/ui.
+    -   Sync pagination với URL params.
+    -   Reset page về 1 khi filters thay đổi.
+
+5.  **Khi làm việc với Product Detail:**
+    -   Sử dụng `Tabs` component cho các sections.
+    -   Thêm DOMPurify cho HTML content rendering.
+    -   Sử dụng `prose` classes để style HTML content.
+
+6.  **Khi chuẩn bị cho i18n:**
+    -   Ghi chú tất cả hardcoded text cần translation.
+    -   Tạo structure cho translation keys.
+    -   Chuẩn bị để sau này thêm `react-i18next`.
+
+7.  **Khi chuẩn bị cho backend integration:**
+    -   Tạo structure cho API hooks (React Query).
+    -   Chuẩn bị types cho API responses.
+    -   Tạo mock API functions để sau thay thế.
+
+8.  **Ngôn ngữ:**
+    -   Tên biến/hàm: Tiếng Anh (chuẩn naming convention).
+    -   Comment giải thích logic: Tiếng Việt.
+    -   Giao tiếp với user: Tiếng Việt.
+
+# TÌNH TRẠNG HIỆN TẠI & KẾ HOẠCH
+
+## Đã triển khai:
+- ✅ Shadcn/ui components với custom theme
+- ✅ Tailwind CSS với CSS variables
+- ✅ Responsive design
+- ✅ Product listing với filters
+- ✅ Product detail với tabs
+- ✅ Header với navigation
+- ✅ Footer
+- ✅ Toast notifications
+
+## Cần triển khai (Ưu tiên cao):
+1.  **LanguageSwitcher trong Header** - Thay thế wishlist icon
+2.  **Pagination cho ProductsPage** - Sử dụng shadcn/ui Pagination
+3.  **DOMPurify cho HTML content** - Product description/ingredients
+
+## Cần triển khai (Trung hạn):
+4.  **react-i18next** - Internationalization
+5.  **Backend integration** - React Query/Redux
+6.  **Real-time updates** - Socket.IO
+7.  **Admin pages** - Redux state management
+
+## Cần triển khai (Dài hạn):
+8.  **Cart functionality** - Context API
+9.  **User authentication** - Auth context
+10. **Checkout flow** - Multi-step form
+11. **Order management** - Admin pages
